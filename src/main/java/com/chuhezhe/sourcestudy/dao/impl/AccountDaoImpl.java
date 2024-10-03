@@ -2,7 +2,6 @@ package com.chuhezhe.sourcestudy.dao.impl;
 
 import com.chuhezhe.sourcestudy.dao.IAccountDao;
 import com.chuhezhe.sourcestudy.util.DBUtilBindThread;
-import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

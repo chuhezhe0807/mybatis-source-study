@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chuhezhe.sourcestudy.dao.UserDao">
+    <select id="query" resultType="user">
+        select `user_id`, `user_name`, `nick_name`, `email`, `sex`,
+               `avatar`, `password`, `login_ip`, `login_date`, `text` from `user` limit 10
+    </select>
+</mapper>

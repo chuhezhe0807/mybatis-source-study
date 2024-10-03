@@ -12,23 +12,23 @@ import java.io.Serializable;
  * @Version 1.0
  */
 public class Account implements Serializable {
-    private int id;
+    private Integer id;
     private String username;
-    private int money;
+    private Integer money;
 
     public static final long serialVersionUID = 102340009887654L;
 
-    public Account(int id, String username, int money) {
+    public Account(Integer id, String username, Integer money) {
         this.id = id;
         this.username = username;
         this.money = money;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -40,11 +40,11 @@ public class Account implements Serializable {
         this.username = username;
     }
 
-    public int getMoney() {
+    public Integer getMoney() {
         return money;
     }
 
-    public void setMoney(int money) {
+    public void setMoney(Integer money) {
         this.money = money;
     }
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 与AccountDao接口相对应了，接口中的方法就是 insert -->
+<mapper namespace="com.chuhezhe.sourcestudy.dao.AccountDao">
+    <insert id="insert" parameterType="account">
+        insert into account (username, money) values (#{username}, #{money})
+    </insert>
+</mapper>
