@@ -1,8 +1,8 @@
-package com.chuhezhe.sourcestudy.dao.impl;
+package com.chuhezhe.sourcestudy.dao;
 
 /**
  * ClassName: IAccountDao
- * Package: com.chuhezhe.sourcestudy.dao.impl
+ * Package: com.chuhezhe.sourcestudy.dao
  * Description:
  *
  * @Author Chuhezhe
@@ -10,4 +10,5 @@ package com.chuhezhe.sourcestudy.dao.impl;
  * @Version 1.0
  */
 public interface IAccountDao {
+    Boolean updateMoney(Integer id, Integer amount);
 }
