@@ -1,17 +1,28 @@
 package com.chuhezhe.sourcestudy;
 
-import org.apache.ibatis.binding.MapperRegistry;
+import com.chuhezhe.sourcestudy.entity.Account;
+import com.chuhezhe.sourcestudy.entity.Employee;
+import com.chuhezhe.sourcestudy.util.DBUtilBindThread;
 import org.apache.ibatis.builder.StaticSqlSource;
+import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.ognl.Ognl;
+import org.apache.ibatis.ognl.OgnlException;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.parsing.XPathParser;
+import org.apache.ibatis.reflection.DefaultReflectorFactory;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
+import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
+import org.apache.ibatis.type.IntegerTypeHandler;
+import org.apache.ibatis.type.StringTypeHandler;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +30,11 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Properties;
 
 /**
@@ -89,5 +105,67 @@ public class ToolTest {
 
         configuration.addMappedStatement(mappedStatement);
         logger.info("");
+    }
+
+    // 使用XMLConfigBuilder解析 mybatis.xml 文件
+    @Test
+    public void testXMLBuilder() throws IOException {
+        InputStream inputStream = new ClassPathResource("mybatis.xml").getInputStream();
+        XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder(inputStream);
+        Configuration configuration = xmlConfigBuilder.parse();
+        logger.info("");
+    }
+
+    @Test
+    public void testOgnl() throws OgnlException {
+        Account account = new Account(1, "xiaozhang", 200);
+
+        Object value = Ognl.getValue("username", account);
+        // 静态变量和方法
+        Object staticVar = Ognl.getValue("@com.chuhezhe.sourcestudy.util.DBUtilBindThread@THREAD_LOCAL", new Object());
+        logger.info("username: {}, staticVar: {}", value, staticVar);
+    }
+
+    @Test
+    public void testTypeHandler() {
+        Connection connection = DBUtilBindThread.getConnection();
+        String sql = "select `username`, `money` from `account`";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // ResultSet.next 移动游标到下一行
+            while(resultSet.next()) {
+                StringTypeHandler stringTypeHandler = new StringTypeHandler();
+                String username = stringTypeHandler.getResult(resultSet, "username");
+
+                IntegerTypeHandler integerTypeHandler = new IntegerTypeHandler();
+                Integer money = integerTypeHandler.getResult(resultSet, "money");
+                logger.info("username: {}, money: {}", username, money);
+            }
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 反射工具类 MetaObject
+    // spring框架的ioc为什么使用反射创建对象，而不是用new直接创建一个对象？
+    //      1、反射可以不需要将类import就可以创建出对象，如果类发生改动的话，可以不需要重新编译，同样能够work
+    //      2、new的方式需要将类引入，且后续类发生变化时，需要重新编译才可以
+    @Test
+    public void testMetaObject() {
+        Employee employee = new Employee(1, "xiaozhang", 2);
+
+        MetaObject metaObject = MetaObject.forObject(
+                employee,
+                new DefaultObjectFactory(),
+                new DefaultObjectWrapperFactory(),
+                new DefaultReflectorFactory()
+        );
+        // 修改当前对象的值
+        metaObject.setValue("name", "wang");
+        metaObject.setValue("deptId", 4);
+        logger.info("employee: {}", employee);
     }
 }
