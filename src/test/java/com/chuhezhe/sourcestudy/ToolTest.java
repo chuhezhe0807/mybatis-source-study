@@ -7,6 +7,8 @@ import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
+import org.apache.ibatis.exceptions.ExceptionFactory;
+import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -36,6 +38,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * ClassName: ToolTest
@@ -167,5 +173,50 @@ public class ToolTest {
         metaObject.setValue("name", "wang");
         metaObject.setValue("deptId", 4);
         logger.info("employee: {}", employee);
+    }
+
+
+    /**
+     * 测试 ErrorContext 类
+     * mybatis抛出的错误是如下格式的：
+     *
+     * Exception in thread "pool-1-thread-10" Exception in thread "pool-1-thread-7" org.apache.ibatis.exceptions.PersistenceException:
+     * ### sql has errors.
+     * ### The error may exist in user.xml
+     * ### The error may involve com.chuhezhe.sourcestudy.ToolTest
+     * ### The error occurred while 在第【9】个流程中
+     * ### SQL: select ** from `user`
+     * ### Cause: java.lang.ArithmeticException: / by zero
+     * 。。。错误堆栈
+     */
+    @Test
+    public void testErrorContext() throws InterruptedException {
+        ExecutorService service = Executors.newFixedThreadPool(10);
+        CountDownLatch countDownLatch = new CountDownLatch(10);
+
+        for(int i = 0; i < 10; i++) {
+            final int j = i;
+
+            service.execute(() -> {
+                try {
+                    ErrorContext.instance()
+                            .activity("在第【" + j + "】个流程中")  // 错误位于哪一个流程
+                            .object(this.getClass().getName()) // 当前对象
+                            .sql("select ** from `user`") // 发生错误的sql语句
+                            .resource("user.xml"); // 哪个资源文件发生了错误
+
+                    if(new Random().nextInt(10) > 6) {
+                        int m = 1 / 0; // 造一个Runtime异常，查看抛出错误的格式是否是按照上面ErrorContext.instance()设置的
+                    }
+
+                    countDownLatch.countDown();
+                }
+                catch (Exception e) {
+                    throw ExceptionFactory.wrapException("sql has errors.", e);
+                }
+            });
+        }
+
+        countDownLatch.await();
     }
 }

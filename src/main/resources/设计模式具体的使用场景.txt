@@ -1,0 +1,3 @@
+1、迭代器模式
+    诸如解析 "dept.id" (先解析 "dept" 在解析 "id") 这种有明显的先后顺序的并且对于先后要处理的两个元素的处理方式都一样的可以使用
+        public class PropertyTokenizer implements Iterator<PropertyTokenizer> {}
