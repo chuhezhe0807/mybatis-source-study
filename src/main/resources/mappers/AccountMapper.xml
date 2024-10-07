@@ -5,7 +5,22 @@
 
 <!-- 与AccountDao接口相对应了，接口中的方法就是 insert -->
 <mapper namespace="com.chuhezhe.sourcestudy.dao.AccountDao">
+    <!--  mybatis.xml 中已经配置过 <typeAliases /> 别名了 -->
+    <!--  parameterType 将会传入这条语句的类全限定名或者别名，这个属性是可选的，因为MyBatis可以通过类型处理器(TypeHandler)推断出具体传入语句的参数，默认值为unset  -->
+    <!--  resultType 期望从这条语句中返回结果的类全限定名或别名。注意，如果返回的是集合，那应该设置为集合包含的类型，而不是集合本身的类型。resultType和resultMap之间只能同时使用一个  -->
+    <!--  resultMap 对外部resultMap的命名引用  -->
     <insert id="insert" parameterType="account">
         insert into account (username, money) values (#{username}, #{money})
     </insert>
+
+    <select id="select" resultMap="myResultMap">
+        select * from `account`
+    </select>
+
+    <resultMap id="myResultMap" type="account">
+        <id property="id" javaType="int" column="id" jdbcType="INTEGER" />
+        <result property="username" javaType="string" jdbcType="VARCHAR" column="username" />
+        <!--    未申明的类型会自动映射    -->
+        <result property="money" column="money" />
+    </resultMap>
 </mapper>

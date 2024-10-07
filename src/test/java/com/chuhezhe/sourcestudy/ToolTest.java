@@ -10,9 +10,7 @@ import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
-import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.ognl.Ognl;
 import org.apache.ibatis.ognl.OgnlException;
 import org.apache.ibatis.parsing.XNode;
@@ -37,6 +35,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -218,5 +218,51 @@ public class ToolTest {
         }
 
         countDownLatch.await();
+    }
+
+    @Test
+    public void testMappedStatement() throws IOException {
+        InputStream inputStream = new ClassPathResource("mybatis.xml").getInputStream();
+        XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder(inputStream);
+        Configuration configuration = xmlConfigBuilder.parse();
+        SqlSource sqlSource = new StaticSqlSource(configuration, "insert into `account` (`username`, `money`) values ('Cat', 100)");
+
+        MappedStatement.Builder builder = new MappedStatement.Builder(
+                configuration,
+                "insert",
+                sqlSource,
+                SqlCommandType.INSERT
+        );
+
+        // 设置结果集
+        /**
+         *
+         *     <resultMap id="myResultMap" type="account">
+         *         <id property="id" javaType="int" column="id" jdbcType="INTEGER" />
+         *         <result property="username" javaType="string" jdbcType="VARCHAR" column="username" />
+         *         <!--    未申明的类型会自动映射    -->
+         *         <result property="money" column="money" />
+         *     </resultMap>
+         *
+         */
+        List<ResultMapping> resultMappings = new ArrayList<>();
+        ResultMapping idMapping = new ResultMapping.Builder(configuration, "id", "id", new IntegerTypeHandler()).build();
+        ResultMapping usernameMapping = new ResultMapping.Builder(configuration, "username", "username", String.class).build();
+        ResultMapping moneyMapping = new ResultMapping.Builder(configuration, "money", "money", Integer.class).build();
+        resultMappings.add(idMapping);
+        resultMappings.add(usernameMapping);
+        resultMappings.add(moneyMapping);
+
+        ResultMap resultMap = new ResultMap.Builder(
+                configuration,
+                "myResultMap",
+                Account.class,
+                resultMappings
+        ).build();
+
+        builder.resultMaps(List.of(resultMap));
+        builder.databaseId("mysql");
+        MappedStatement mappedStatement = builder.build();
+        logger.info("");
     }
 }
