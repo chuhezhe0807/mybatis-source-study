@@ -13,7 +13,7 @@
         insert into account (username, money) values (#{username}, #{money})
     </insert>
 
-    <select id="select" resultMap="myResultMap">
+    <select id="query" resultMap="myResultMap">
         select * from `account`
     </select>
 

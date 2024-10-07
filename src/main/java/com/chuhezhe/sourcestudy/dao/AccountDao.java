@@ -2,6 +2,8 @@ package com.chuhezhe.sourcestudy.dao;
 
 import com.chuhezhe.sourcestudy.entity.Account;
 
+import java.util.List;
+
 /**
  * ClassName: AccountDao
  * Package: com.chuhezhe.sourcestudy.dao
@@ -13,4 +15,6 @@ import com.chuhezhe.sourcestudy.entity.Account;
  */
 public interface AccountDao {
     int insert(Account account);
+
+    List<Account> query();
 }

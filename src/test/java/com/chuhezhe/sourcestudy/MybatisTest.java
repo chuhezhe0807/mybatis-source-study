@@ -91,5 +91,9 @@ public class MybatisTest {
         UserDao userDao = sqlSession.getMapper(UserDao.class);
         List<User> userList = userDao.query();
         logger.info("userList: {}", userList);
+
+        AccountDao mapper = sqlSession.getMapper(AccountDao.class);
+        List<Account> query = mapper.query();
+        logger.info("query: {}", query);
     }
 }
