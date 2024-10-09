@@ -17,6 +17,21 @@
         select * from `account`
     </select>
 
+    <select id="queryAll">
+        select id, username, money from account                   <!-- TextSqlNode -->
+        <where>                                                   <!-- WhereSqlNode -->
+            <if test="id != null">                                <!-- IfSqlNode -->
+                and id = #{id}                                    <!-- TextSqlNode -->
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="money != null">
+                and money = #{money}
+            </if>
+        </where>
+    </select>
+
     <resultMap id="myResultMap" type="account">
         <id property="id" javaType="int" column="id" jdbcType="INTEGER" />
         <result property="username" javaType="string" jdbcType="VARCHAR" column="username" />

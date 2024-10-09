@@ -35,10 +35,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -225,7 +222,7 @@ public class ToolTest {
         InputStream inputStream = new ClassPathResource("mybatis.xml").getInputStream();
         XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder(inputStream);
         Configuration configuration = xmlConfigBuilder.parse();
-        SqlSource sqlSource = new StaticSqlSource(configuration, "insert into `account` (`username`, `money`) values ('Cat', 100)");
+        SqlSource sqlSource = new StaticSqlSource(configuration, "select `id`, `username`, `money` from `account`");
 
         MappedStatement.Builder builder = new MappedStatement.Builder(
                 configuration,
@@ -263,6 +260,20 @@ public class ToolTest {
         builder.resultMaps(List.of(resultMap));
         builder.databaseId("mysql");
         MappedStatement mappedStatement = builder.build();
-        logger.info("");
+        BoundSql boundSql = mappedStatement.getBoundSql(new Account(1, null, null));
+        String sql = boundSql.getSql();
+        logger.info("sql: {}", sql);
+
+        // DynamicContext 是编译解析sql语句的上下文
+    }
+
+    @Test
+    public void testStringJoiner() {
+        StringJoiner stringJoiner = new StringJoiner("-");
+        stringJoiner.add("1");
+        stringJoiner.add("2");
+        stringJoiner.add("3");
+        stringJoiner.add("4");
+        logger.info("stringJoiner: {}", stringJoiner);
     }
 }
