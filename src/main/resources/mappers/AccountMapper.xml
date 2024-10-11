@@ -10,7 +10,7 @@
     <!--  resultType 期望从这条语句中返回结果的类全限定名或别名。注意，如果返回的是集合，那应该设置为集合包含的类型，而不是集合本身的类型。resultType和resultMap之间只能同时使用一个  -->
     <!--  resultMap 对外部resultMap的命名引用  -->
     <insert id="insert" parameterType="account">
-        insert into account (username, money) values (#{username}, #{money})
+        insert into account (username, money) values <if test="1 == 1"> (#{username}, #{money}) </if>
     </insert>
 
     <select id="query" resultMap="myResultMap">

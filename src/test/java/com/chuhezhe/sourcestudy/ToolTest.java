@@ -19,6 +19,7 @@ import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
 import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
+import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.type.IntegerTypeHandler;
@@ -275,5 +276,20 @@ public class ToolTest {
         stringJoiner.add("3");
         stringJoiner.add("4");
         logger.info("stringJoiner: {}", stringJoiner);
+    }
+
+    @Test
+    public void testXMLLanguageDriver() throws IOException {
+        InputStream inputStream = new ClassPathResource("mybatis.xml").getInputStream();
+        XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder(inputStream);
+        Configuration configuration = xmlConfigBuilder.parse();
+
+        InputStream inputStream1 = new ClassPathResource("/static/testSql.xml").getInputStream();
+        XPathParser xPathParser = new XPathParser(inputStream1);
+        XNode xNode = xPathParser.evalNode("/select"); // 解析select标签下的内容
+
+        XMLLanguageDriver xmlLanguageDriver = new XMLLanguageDriver();
+        SqlSource sqlSource = xmlLanguageDriver.createSqlSource(configuration, xNode, Account.class);
+        logger.info("");
     }
 }
