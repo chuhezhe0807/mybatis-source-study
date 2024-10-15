@@ -1,3 +1,6 @@
 xxxContext的类应该尽可能的维护少成员变量，例如 DynamicContext 就维护了 sqlBuilder（编译解析的sql语句） 一个主要的成员变量，其余使用内部类来描述。
     也就是说 xxxContext 应该是某一个动作的上下文对象，从这个角度来说该类的成员变量应该围绕这一动作进行设计，并且尽可能地少。
     并且突出主要的成员变量，次要的改为内部类去描述，这些内部类同样遵循主要的成员变量精简，次要的改为类去描述。
+
+某一件事有多个handler处理时可以将这些个handler定义成提供一个handle方法的接口的实现类，然后维护一个Map将这些handler
+    都存进这个Map中，后续需要用到是直接去Map取就可以了。这就是面向接口编程。eg: XMLScriptBuilder#nodeHandlerMap

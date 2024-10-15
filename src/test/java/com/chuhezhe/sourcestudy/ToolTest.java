@@ -9,6 +9,7 @@ import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.io.DefaultVFS;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.ognl.Ognl;
@@ -32,6 +33,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -291,5 +293,21 @@ public class ToolTest {
         XMLLanguageDriver xmlLanguageDriver = new XMLLanguageDriver();
         SqlSource sqlSource = xmlLanguageDriver.createSqlSource(configuration, xNode, Account.class);
         logger.info("");
+    }
+
+    @Test
+    public void testVFS() throws IOException {
+        DefaultVFS defaultVFS = new DefaultVFS();
+
+        // 加载classpath下的文件
+        List<String> list = defaultVFS.list("com/chuhezhe");
+        logger.info("list: {}", list);
+
+        // 加载jar包中的资源
+        list = defaultVFS.list(
+          new URL("file:///C:/Users/褚涸辙/.m2/repository/mysql/mysql-connector-java/8.0.30/mysql-connector-java-8.0.30.jar"),
+                "com/mysql/cj/"
+        );
+        logger.info("list: {}", list);
     }
 }

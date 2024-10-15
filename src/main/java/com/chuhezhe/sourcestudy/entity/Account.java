@@ -1,5 +1,7 @@
 package com.chuhezhe.sourcestudy.entity;
 
+import org.apache.ibatis.type.Alias;
+
 import java.io.Serializable;
 
 /**
@@ -11,6 +13,7 @@ import java.io.Serializable;
  * @Create 2024/10/3 16:38
  * @Version 1.0
  */
+@Alias("Account") // 注解设置的别名优先级高于配置文件(mybatis.xml-<typeAliases />)
 public class Account implements Serializable {
     private Integer id;
     private String username;
