@@ -4,3 +4,6 @@ xxxContext的类应该尽可能的维护少成员变量，例如 DynamicContext 
 
 某一件事有多个handler处理时可以将这些个handler定义成提供一个handle方法的接口的实现类，然后维护一个Map将这些handler
     都存进这个Map中，后续需要用到是直接去Map取就可以了。这就是面向接口编程。eg: XMLScriptBuilder#nodeHandlerMap
+
+设计类的时候为了考虑可扩展性，定义一个抽象类或者接口把必要的方法写在里面，后续就可以面向这个抽象类或接口编程，保证了可扩展性，
+    对原有的代码也不会产生很强的侵入性

@@ -5,6 +5,8 @@
 
 <!-- 与AccountDao接口相对应了，接口中的方法就是 insert -->
 <mapper namespace="com.chuhezhe.sourcestudy.dao.AccountDao">
+<!--    <cache-ref namespace=""/>-->
+    
     <!--  mybatis.xml 中已经配置过 <typeAliases /> 别名了 -->
     <!--  parameterType 将会传入这条语句的类全限定名或者别名，这个属性是可选的，因为MyBatis可以通过类型处理器(TypeHandler)推断出具体传入语句的参数，默认值为unset  -->
     <!--  resultType 期望从这条语句中返回结果的类全限定名或别名。注意，如果返回的是集合，那应该设置为集合包含的类型，而不是集合本身的类型。resultType和resultMap之间只能同时使用一个  -->

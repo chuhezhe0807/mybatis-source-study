@@ -23,7 +23,10 @@
     <!--   也可以使用 <typeAlias type="com.chuhezhe.sourcestudy.ToolTest" alias="xxx" /> 单独给某个类设置别名   -->
     </typeAliases>
     <!-- 类型处理器：定义Java类型与数据库中的数据类型之间的转换关系 -->
-<!--    <typeHandlers></typeHandlers>-->
+<!--    <typeHandlers>-->
+<!--        <typeHandler handler="" jdbcType="" javaType="" />-->
+<!--        <package name="com.xxx"/>-->
+<!--    </typeHandlers>-->
 <!--    &lt;!&ndash; 对象工厂 &ndash;&gt;-->
 <!--    <objectFactory type=""></objectFactory>-->
 <!--    &lt;!&ndash; 插件：mybatis的插件,插件可以修改mybatis的内部运行规则 &ndash;&gt;-->
@@ -46,7 +49,11 @@
         </environment>
     </environments>
     <!-- 数据库厂商标识 -->
-<!--    <databaseIdProvider type=""></databaseIdProvider>-->
+    <databaseIdProvider type="DB_VENDOR">
+        <property name="SQL Server" value="sqlserver"/>
+        <property name="DB2" value="db2"/>
+        <property name="Oracle" value="oracle" />
+    </databaseIdProvider>
     <!-- 映射器：指定映射文件或者映射类 -->
     <mappers>
         <mapper resource="mappers/AccountMapper.xml" />
