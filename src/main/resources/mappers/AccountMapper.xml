@@ -5,7 +5,22 @@
 
 <!-- 与AccountDao接口相对应了，接口中的方法就是 insert -->
 <mapper namespace="com.chuhezhe.sourcestudy.dao.AccountDao">
-<!--    <cache-ref namespace=""/>-->
+    <!-- <cache-ref /> 在当前的命名空间下可以使用其他命名空间定义的缓存  -->
+    <cache-ref namespace="com.chuhezhe.sourcestudy.dao.DeptDao"/>
+
+    <!--  创建了一个FIFO的二级缓存，每个60秒刷新，最多可以存储结果对象或列表的512个引用，而且返回的对象被认为是只读的  -->
+    <!--  因此对他们进行修改可能会在不同线程的调用者之间产生冲突  -->
+    <!--  默认的清除策略时LRU  -->
+    <!--  flushInterval（刷新间隔）默认不设置，也就是没有刷新间隔，缓存仅仅会再调用语句时刷新  -->
+    <!--  size 引用数目 存储结果对象或列表的引用 默认值是1024  -->
+    <!--  readOnly 只读的缓存会给所有调用者返回缓存对象的相同实例，因此这些对象被能被修改，这就提供了客观的性能提升。  -->
+    <!--  而可读写的缓存会通过序列化返回缓存对象的拷贝，速度上会慢一些，但是更安全，因此默认值是false  -->
+    <cache
+        eviction="FIFO"
+        flushInterval="60000"
+        size="512"
+        readOnly="true"
+    />
     
     <!--  mybatis.xml 中已经配置过 <typeAliases /> 别名了 -->
     <!--  parameterType 将会传入这条语句的类全限定名或者别名，这个属性是可选的，因为MyBatis可以通过类型处理器(TypeHandler)推断出具体传入语句的参数，默认值为unset  -->
